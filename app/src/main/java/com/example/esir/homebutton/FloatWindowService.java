@@ -51,7 +51,7 @@ public class FloatWindowService extends Service {
 
     //定义浮动窗口布局
     public LinearLayout float_window_small;
-    private CardView float_window_menu;
+    private LinearLayout float_window_menu;
     WindowManager.LayoutParams wmParams;
     WindowManager.LayoutParams menuParams;
     int tempx,tempy;
@@ -72,18 +72,22 @@ public class FloatWindowService extends Service {
           switch (msg.what){
               case 0:
                   //WIFI_STATE_DISABLING
+                  //Log.i("wifi","WIFI_STATE_DISABLING");
                   wifi_button.setBackground(getApplication().getResources().getDrawable(R.drawable.ic_wifi_grey600_48dp));
                   break;
               case 1:
                   //WIFI_SDATE_DISABLED
+                  //Log.i("wifi","WIFI_SDATE_DISABLED");
                   wifi_button.setBackground(getApplication().getResources().getDrawable(R.drawable.ic_wifi_grey600_48dp));//此方法只适用于sdk16以上版本
                   break;
               case 2:
                   //WIFI_STATE_ENABLING
+                  //Log.i("wifi","WIFI_STATE_ENABLING");
                   wifi_button.setBackground(getApplication().getResources().getDrawable(R.drawable.ic_wifi_grey600_48dp));
                   break;
               case 3:
                   // WIFI_STATE_ENABLED
+                  //Log.i("wifi","WIFI_STATE_ENABLED");
                   wifi_button.setBackground(getApplication().getResources().getDrawable(R.drawable.ic_wifi_white_48dp));
                   break;
               case 5:
@@ -116,10 +120,13 @@ public class FloatWindowService extends Service {
               case 10:
                   ring_button.setBackground(getApplication().getResources().getDrawable(R.drawable.ic_bell_white_48dp));
                   break;
+              case 11:
+                  ring_button.setBackground(getApplication().getResources().getDrawable(R.drawable.ic_vibrate_white_48dp));
               default:
-                  Toast.makeText(getApplication(),"Mistake happened!",Toast.LENGTH_SHORT).show();
+                  //Toast.makeText(getApplication(),"Mistake happened!",Toast.LENGTH_SHORT).show();
                   break;
           }
+          //Log.i("msg.!!!!what", String.valueOf(msg.what));
       }
     };
 
@@ -132,25 +139,25 @@ public class FloatWindowService extends Service {
     public void onCreate(){
         super.onCreate();
 
-        Log.i("system",android.os.Build.MODEL+","+android.os.Build.VERSION.SDK+","+android.os.Build.VERSION.RELEASE);
+        //Log.i("system",android.os.Build.MODEL+","+android.os.Build.VERSION.SDK+","+android.os.Build.VERSION.RELEASE);
         String temp[] = Build.VERSION.RELEASE.split("\\.");//.是转义字符，要加上//
         int system = Integer.parseInt(temp[0]);
         system_version = system;
         sdk_version = Build.VERSION.SDK_INT;
-        Log.i("sdk" , String.valueOf(sdk_version));//获取int型的版本号
+        //Log.i("sdk" , String.valueOf(sdk_version));//获取int型的版本号
 
-        Notification notification = new Notification(R.drawable.ic_emoticon_devil_black_48dp,
+        /*Notification notification = new Notification(R.drawable.ic_emoticon_devil_black_48dp,
                 "easttouch后台运行", System.currentTimeMillis());
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
         notification.setLatestEventInfo(this, "Easytouch of Yasic", "正在后台运行中", pendingIntent);
-        startForeground(1, notification);
+        startForeground(1, notification);*/
     }
 
     public void setbutton2view(){
         LayoutInflater inflater = LayoutInflater.from(getApplication());
-        float_window_menu = (CardView)inflater.inflate(R.layout.float_window_menu , null);
+        float_window_menu = (LinearLayout)inflater.inflate(R.layout.float_window_menu , null);
         float_window_small = (LinearLayout) inflater.inflate(R.layout.float_window, null);
 
         floatwindowbutton = (Button)float_window_small.findViewById(R.id.floatwindowbutton);
@@ -231,12 +238,6 @@ public class FloatWindowService extends Service {
         home_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("home?", String.valueOf(ishome()));
-                /*if(ishome()){
-                    float_window_menu.setVisibility(View.GONE);
-                    mFloatLayout.setVisibility(View.VISIBLE);
-                }
-                else{*/
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.putExtra("GOHOME", "GOHOME");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
@@ -244,7 +245,6 @@ public class FloatWindowService extends Service {
                 startActivity(intent);
                 float_window_menu.setVisibility(View.GONE);
                 float_window_small.setVisibility(View.VISIBLE);
-                //}
             }
         });
 
@@ -277,7 +277,7 @@ public class FloatWindowService extends Service {
                         wifimanager.setWifiEnabled(false);//开启wifi
                         break;
                     default:
-                        Toast.makeText(getApplicationContext(), "Mistake happened!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "WIFI Mistake happened!", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -314,6 +314,24 @@ public class FloatWindowService extends Service {
             }
         });
 
+        ring_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int state = audiomanager.getRingerMode();
+                if(state == AudioManager.RINGER_MODE_SILENT){
+                    audiomanager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                    Log.i("audiomanager","9");
+                }
+                else if(state == AudioManager.RINGER_MODE_NORMAL){
+                    audiomanager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                    Log.i("audiomanager","10");
+                }
+                else if(state == AudioManager.RINGER_MODE_VIBRATE){
+                    audiomanager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                    Log.i("audiomanager","11");
+                }
+            }
+        });
         return super.onStartCommand(intent,flags,startId);
     }
 
@@ -347,54 +365,6 @@ public class FloatWindowService extends Service {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void create_float_window(){
-        wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;//
-        //设置图片格式，效果为背景透明
-        wmParams.format = PixelFormat.TRANSLUCENT;
-        //设置浮动窗口不可聚焦（实现操作除浮动窗口外的其他可见窗口的操作）
-        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        //调整悬浮窗显示的停靠位置为左侧置顶
-        wmParams.gravity = Gravity.LEFT | Gravity.TOP;
-        // 以屏幕左上角为原点，设置x、y初始值，相对于gravity
-        wmParams.x = 0;
-        wmParams.y = 0;
-        //设置悬浮窗口长宽数据
-        //wmParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        //wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        wmParams.width = dp2pix(48);
-        wmParams.height = dp2pix(48);
-
-        mWindowManager.addView(float_window_small, wmParams);
-    }
-
-    public void create_float_windowmenu(){
-        int screenWidth = mWindowManager.getDefaultDisplay().getWidth();
-        int screenHeight = mWindowManager.getDefaultDisplay().getHeight();
-        menuParams = new WindowManager.LayoutParams();
-        menuParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-        menuParams.format = PixelFormat.TRANSLUCENT;
-        menuParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        menuParams.gravity = Gravity.LEFT | Gravity.TOP;
-        menuParams.x = screenWidth / 2 - dp2pix(196) / 2;
-        menuParams.y = screenHeight/2 - dp2pix(128)/2;
-        menuParams.width = dp2pix(196);
-        menuParams.height = dp2pix(128);
-        mWindowManager.addView(float_window_menu,menuParams);
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        if(float_window_small != null)
-        {
-            //移除悬浮窗口
-            mWindowManager.removeView(float_window_small);
-        }
-        if(float_window_menu != null) {
-            mWindowManager.removeView(float_window_menu);
         }
     }
 
@@ -492,6 +462,7 @@ public class FloatWindowService extends Service {
                 msg.what = 4;
                 break;
         }
+        //Log.i("msg.what", String.valueOf(msg.what));
         handler.sendMessage(msg);
     }
 
@@ -524,16 +495,24 @@ public class FloatWindowService extends Service {
         int state = audiomanager.getRingerMode();
         if(state == AudioManager.RINGER_MODE_SILENT){
             msg.what = 9;//静音
+            Log.i("audiomanager","9");
         }
         else if(state == AudioManager.RINGER_MODE_NORMAL){
-            msg.what = 10;
+            msg.what = 10;//正常
+            Log.i("audiomanager","10");
+        }
+        else if(state == AudioManager.RINGER_MODE_VIBRATE){
+            msg.what = 11;//震动
+            Log.i("audiomanager","11");
+        }
+        else {
+            msg.what = 12;
         }
         handler.sendMessage(msg);
     }
 
     private int dp2pix(int dp){
        float scale = getResources().getDisplayMetrics().density;
-        Log.i("density", String.valueOf(scale));
         int pix = (int) (dp * scale + 0.5f);
         return pix;
     }
@@ -561,5 +540,53 @@ public class FloatWindowService extends Service {
             names.add(ri.activityInfo.packageName);
         }
         return names;
+    }
+
+    public void create_float_window(){
+        wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;//
+        //设置图片格式，效果为背景透明
+        wmParams.format = PixelFormat.TRANSLUCENT;
+        //设置浮动窗口不可聚焦（实现操作除浮动窗口外的其他可见窗口的操作）
+        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        //调整悬浮窗显示的停靠位置为左侧置顶
+        wmParams.gravity = Gravity.LEFT | Gravity.TOP;
+        // 以屏幕左上角为原点，设置x、y初始值，相对于gravity
+        wmParams.x = 0;
+        wmParams.y = 0;
+        //设置悬浮窗口长宽数据
+        //wmParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        //wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        wmParams.width = dp2pix(48);
+        wmParams.height = dp2pix(48);
+
+        mWindowManager.addView(float_window_small, wmParams);
+    }
+
+    public void create_float_windowmenu(){
+        int screenWidth = mWindowManager.getDefaultDisplay().getWidth();
+        int screenHeight = mWindowManager.getDefaultDisplay().getHeight();
+        menuParams = new WindowManager.LayoutParams();
+        menuParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        menuParams.format = PixelFormat.TRANSLUCENT;
+        menuParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        menuParams.gravity = Gravity.LEFT | Gravity.TOP;
+        menuParams.x = screenWidth / 2 - dp2pix(196) / 2;
+        menuParams.y = screenHeight/2 - dp2pix(128)/2;
+        menuParams.width = dp2pix(196);
+        menuParams.height = dp2pix(128);
+        mWindowManager.addView(float_window_menu,menuParams);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        if(float_window_small != null)
+        {
+            //移除悬浮窗口
+            mWindowManager.removeView(float_window_small);
+        }
+        if(float_window_menu != null) {
+            mWindowManager.removeView(float_window_menu);
+        }
     }
 }

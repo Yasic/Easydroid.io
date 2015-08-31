@@ -1,91 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="196dp"
     android:layout_height="128dp"
-    android:background="#000000"
-    app:cardCornerRadius="7dp">
+    android:background="@drawable/cornor1"
+    >
     <RelativeLayout
         android:layout_width="196dp"
         android:layout_height="match_parent"
-        android:background="#000000"
         android:clickable="true">
     <LinearLayout
         android:id="@+id/floatwindowmenu_first"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:orientation="horizontal">
         <Button
             android:id="@+id/home_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginLeft="13dp"
-            android:layout_marginRight="13dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="11dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
             android:background="@drawable/ic_home_white_48dp"
             android:textSize="24dp"
             android:gravity="center"
             android:textAllCaps="false"/>
         <Button
             android:id="@+id/wifi_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginRight="13dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="11dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
             android:background="@drawable/ic_wifi_white_48dp"
             android:textSize="24dp"
             android:gravity="center"
             android:textAllCaps="false"/>
         <Button
             android:id="@+id/bluetooth_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginRight="13dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
             android:background="@drawable/ic_bluetooth_white_48dp"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/floatwindowmenu_second"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:orientation="horizontal"
         android:layout_below="@id/floatwindowmenu_first">
         <Button
             android:id="@+id/connectivity_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginLeft="13dp"
-            android:layout_marginRight="13dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="11dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
             android:background="@drawable/ic_internet_explorer_white_48dp"
             android:textSize="24dp"
             android:gravity="center"
             android:textAllCaps="false"/>
         <Button
             android:id="@+id/close_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginRight="13dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="11dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
             android:background="@drawable/ic_window_close_white_48dp"
             android:textSize="24dp"
             android:gravity="center"
             android:textAllCaps="false"/>
         <Button
             android:id="@+id/ring_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginRight="13dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
             android:background="@drawable/ic_bell_white_48dp"/>
     </LinearLayout>
     </RelativeLayout>
-</android.support.v7.widget.CardView>
+</LinearLayout>
