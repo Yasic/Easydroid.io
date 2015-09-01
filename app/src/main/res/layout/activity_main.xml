@@ -12,13 +12,14 @@
         <TextView
             android:id="@+id/mainactivity_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="33dp"
             android:layout_marginTop="7dp"
             android:text="EasyTouch of Yasic"
             android:textSize="24dp"
             android:gravity="center"
             android:textColor="#ffffff"/>
         <ImageView
+            android:id="@+id/mainactivity_bigbutton"
             android:layout_width="220dp"
             android:layout_height="220dp"
             android:layout_gravity="center"

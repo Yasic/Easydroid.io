@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="#00ffffff">
+    <Button
+        android:id="@+id/floatmenu_bigbutton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00ffffff"
+        />
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="196dp"
-    android:layout_height="128dp"
+    android:layout_width="212dp"
+    android:layout_height="212dp"
     android:background="@drawable/cornor1"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:orientation="vertical"
     >
     <RelativeLayout
         android:layout_width="196dp"
@@ -18,10 +32,10 @@
             android:id="@+id/home_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginLeft="22dp"
-            android:layout_marginRight="11dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
+            android:layout_marginLeft="26dp"
+            android:layout_marginRight="13dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginBottom="13dp"
             android:background="@drawable/ic_home_white_48dp"
             android:textSize="24dp"
             android:gravity="center"
@@ -30,10 +44,10 @@
             android:id="@+id/wifi_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginLeft="11dp"
-            android:layout_marginRight="11dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="13dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginBottom="13dp"
             android:background="@drawable/ic_wifi_white_48dp"
             android:textSize="24dp"
             android:gravity="center"
@@ -42,10 +56,10 @@
             android:id="@+id/bluetooth_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginLeft="11dp"
-            android:layout_marginRight="22dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="26dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginBottom="13dp"
             android:background="@drawable/ic_bluetooth_white_48dp"/>
     </LinearLayout>
     <LinearLayout
@@ -58,10 +72,10 @@
             android:id="@+id/connectivity_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginLeft="22dp"
-            android:layout_marginRight="11dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
+            android:layout_marginLeft="26dp"
+            android:layout_marginRight="13dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginBottom="13dp"
             android:background="@drawable/ic_internet_explorer_white_48dp"
             android:textSize="24dp"
             android:gravity="center"
@@ -70,10 +84,10 @@
             android:id="@+id/close_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginLeft="11dp"
-            android:layout_marginRight="11dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="13dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginBottom="13dp"
             android:background="@drawable/ic_window_close_white_48dp"
             android:textSize="24dp"
             android:gravity="center"
@@ -82,11 +96,47 @@
             android:id="@+id/ring_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginLeft="11dp"
-            android:layout_marginRight="22dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="26dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginBottom="13dp"
             android:background="@drawable/ic_bell_white_48dp"/>
     </LinearLayout>
+        <LinearLayout
+            android:id="@+id/floatwindowmenu_third"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:layout_below="@id/floatwindowmenu_second">
+            <Button
+                android:id="@+id/camera_button"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginLeft="26dp"
+                android:layout_marginRight="13dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="13dp"
+                android:background="@drawable/ic_camera_white_48dp"
+                />
+            <Button
+                android:id="@+id/call_button"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginLeft="13dp"
+                android:layout_marginRight="13dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="26dp"
+                android:background="@drawable/ic_phone_white_48dp"/>
+            <Button
+                android:id="@+id/message_button"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginLeft="13dp"
+                android:layout_marginRight="26dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="26dp"
+                android:background="@drawable/ic_message_draw_white_48dp"/>
+        </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
+</RelativeLayout>
