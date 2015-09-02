@@ -36,6 +36,6 @@ public class Welcome_Activity extends Activity {
                 finish();
             }
         };
-        timer.schedule(timerTask, 2000);
+        timer.schedule(timerTask, 500);
     }
 }

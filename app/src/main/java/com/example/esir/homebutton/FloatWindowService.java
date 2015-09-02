@@ -211,8 +211,7 @@ public class FloatWindowService extends Service {
         create_float_window();
         create_float_windowmenu();
 
-        Button floatmenu_bigbutton = (Button)float_window_menu.findViewById(R.id.floatmenu_bigbutton);
-        floatmenu_bigbutton.setOnClickListener(new View.OnClickListener() {
+        float_window_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -778,7 +777,7 @@ public class FloatWindowService extends Service {
         // 以屏幕左上角为原点，设置x、y初始值，相对于gravity
         int screenWidth = mWindowManager.getDefaultDisplay().getWidth();
         wmParams.x = screenWidth / 2-dp2pix(48) / 2;
-        wmParams.y = dp2pix(157)-dp2pix(48) / 2;
+        wmParams.y = dp2pix(117)-dp2pix(48) / 2;
         //设置悬浮窗口长宽数据
         //wmParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         //wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;

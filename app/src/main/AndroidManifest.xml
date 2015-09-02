@@ -27,7 +27,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/easytouch"
-        android:label="EasyTouch"
+        android:label="EasyDroid"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".Welcome_Activity">
