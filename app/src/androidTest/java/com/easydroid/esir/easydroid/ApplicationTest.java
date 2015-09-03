@@ -1,4 +1,4 @@
-package com.example.esir.homebutton;
+package com.easydroid.esir.easydroid;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

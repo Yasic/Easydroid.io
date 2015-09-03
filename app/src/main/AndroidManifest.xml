@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.esir.homebutton">
+    package="com.easydroid.esir.easydroid"
+    android:versionCode="1"
+    android:versionName="1.1.2">
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <!-- wifi权限-->
@@ -30,16 +32,16 @@
         android:label="EasyDroid"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Welcome_Activity">
+            android:name="com.easydroid.esir.easydroid.Welcome_Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity">
+            android:name="com.easydroid.esir.easydroid.MainActivity">
         </activity>
-        <service android:name=".FloatWindowService" >
+        <service android:name="com.easydroid.esir.easydroid.FloatWindowService" >
         </service>
     </application>
 

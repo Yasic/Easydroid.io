@@ -3,4 +3,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <dimen name="buttonwidth">45dp</dimen>
+    <dimen name="buttonfullmargin">36dp</dimen>
+    <dimen name="buttonhalfmargin">18dp</dimen>
 </resources>
