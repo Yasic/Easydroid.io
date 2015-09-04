@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -18,8 +19,10 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.v7.internal.view.menu.MenuWrapperFactory;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -45,7 +48,7 @@ import android.os.Handler;
 /**
  * Created by ESIR on 2015/7/25.
  */
-public class FloatWindowService extends Service {
+public class FloatWindowService extends Service implements View.OnClickListener {
 
     //定义浮动窗口布局
     public LinearLayout float_window_small;
@@ -64,6 +67,9 @@ public class FloatWindowService extends Service {
     public int system_version;
     public int sdk_version;
     private Camera camera;
+    private Message msg = new Message();
+    TimerTask timerTask;
+    Timer timer;
 
     Handler handler = new Handler(){
       @Override
@@ -174,15 +180,184 @@ public class FloatWindowService extends Service {
         float_window_small = (LinearLayout) inflater.inflate(R.layout.float_window, null);
 
         floatwindowbutton = (Button)float_window_small.findViewById(R.id.floatwindowbutton);
+        floatwindowbutton.setOnClickListener(this);
         home_button = (Button)float_window_menu.findViewById(R.id.home_button);
+        home_button.setOnClickListener(this);
         wifi_button = (Button)float_window_menu.findViewById(R.id.wifi_button);
+        wifi_button.setOnClickListener(this);
         connectivity_button = (Button)float_window_menu.findViewById(R.id.connectivity_button);
+        connectivity_button.setOnClickListener(this);
         airplane_button = (Button)float_window_menu.findViewById(R.id.airplane_button);
+        airplane_button.setOnClickListener(this);
         bluetooth_button = (Button)float_window_menu.findViewById(R.id.bluetooth_button);
+        bluetooth_button.setOnClickListener(this);
         ring_button = (Button)float_window_menu.findViewById(R.id.ring_button);
+        ring_button.setOnClickListener(this);
         camera_button = (Button)float_window_menu.findViewById(R.id.camera_button);
+        camera_button.setOnClickListener(this);
         message_button = (Button)float_window_menu.findViewById(R.id.message_button);
+        message_button.setOnClickListener(this);
         call_button = (Button)float_window_menu.findViewById(R.id.call_button);
+        call_button.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent;
+        switch (v.getId()){
+            case R.id.home_button:
+                Log.i("fuck","fuck");
+                intent = new Intent(Intent.ACTION_MAIN);
+                intent.putExtra("GOHOME", "GOHOME");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
+                try {
+                    float_window_menu_animation(-1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            case R.id.wifi_button:
+                switch (wifimanager.getWifiState()) {
+                    case 0:
+                        //WIFI_STATE_DISABLING
+                        break;
+                    case 1:
+                        //WIFI_SDATE_DISABLED
+                        wifimanager.setWifiEnabled(true);//关闭wifi
+                        break;
+                    case 2:
+                        //WIFI_STATE_ENABLING
+                        break;
+                    case 3:
+                        // WIFI_STATE_ENABLED
+                        wifimanager.setWifiEnabled(false);//开启wifi
+                        break;
+                    default:
+                        Toast.makeText(getApplicationContext(), "WIFI Mistake happened!", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                break;
+
+            case R.id.connectivity_button:
+                Boolean enabled = false;
+                if(system_version < 5){
+                    if(getMobileDataState()){
+
+                    }
+                    else{
+                        enabled = true;
+                    }
+                    setMobileState(getApplicationContext(),enabled);
+                }
+                else{
+                    intent = new Intent(Settings.ACTION_SETTINGS);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    try {
+                        float_window_menu_animation(-1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+
+            case R.id.airplane_button:
+                ContentResolver cr = getContentResolver();
+                if(system_version < 4.2){
+                    if(Settings.System.getString(cr,Settings.System.AIRPLANE_MODE_ON).equals("0")){
+                        //获取当前飞行模式状态,返回的是String值0,或1.0为关闭飞行,1为开启飞行
+                        //如果关闭飞行,则打开飞行
+                        Settings.System.putString(cr,Settings.System.AIRPLANE_MODE_ON, "1");
+                        intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+                        intent.putExtra("Sponsor", "Sodino");
+                        sendBroadcast(intent);
+                    }else{
+                        //否则关闭飞行
+                        Settings.System.putString(cr,Settings.System.AIRPLANE_MODE_ON, "0");
+                        intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+                        sendBroadcast(intent);
+                    }
+                }
+                else{
+                    intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+                try {
+                    float_window_menu_animation(-1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            case R.id.bluetooth_button:
+                if(bluetoothadapter.isEnabled()){
+                    bluetoothadapter.disable();//关闭蓝牙
+                }
+                else{
+                    bluetoothadapter.enable();//打开蓝牙
+                }
+                break;
+
+            case R.id.ring_button:
+                if(audiomanager.getRingerMode() == AudioManager.RINGER_MODE_SILENT){
+                    audiomanager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                }
+                else if(audiomanager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
+                    audiomanager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                }
+                else if(audiomanager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE){
+                    /*Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);*/
+                    audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                }
+                break;
+
+            case R.id.camera_button:
+                intent=new Intent();
+                // 指定开启系统相机的Action
+                intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                try {
+                    float_window_menu_animation(-1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            case R.id.message_button:
+                intent = new Intent(Intent.ACTION_MAIN);
+                intent.setType("vnd.android-dir/mms-sms");
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                try {
+                    float_window_menu_animation(-1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            case R.id.call_button:
+                intent = new Intent(Intent.ACTION_DIAL);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                try {
+                    float_window_menu_animation(-1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 
     @Override
@@ -191,7 +366,7 @@ public class FloatWindowService extends Service {
         mWindowManager = (WindowManager)getApplication().getSystemService(getApplication().WINDOW_SERVICE);
         //访问service提供的服务
         setbutton2view();//设置button绑定view
-
+        float_window_menu.setVisibility(View.GONE);
         wifimanager = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);//获取wifi服务
         refresh_wifistate();//周期更新wifiicon状态
 
@@ -199,23 +374,40 @@ public class FloatWindowService extends Service {
         refresh_bluetooth();//刷新蓝牙icon状态
         refresh_ring();
         refresh_write();
-        //refresh_flash();
 
         create_float_window();
         create_float_windowmenu();
+
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                wifi2icon();
+
+                bluetoothadapter = BluetoothAdapter.getDefaultAdapter();
+                bluetooth2icon();
+
+                connecty2icon();
+
+                ContentResolver cr = getContentResolver();
+                write2icon(cr);
+
+                audiomanager = (AudioManager)getApplication().getSystemService(Context.AUDIO_SERVICE);
+                int state = audiomanager.getRingerMode();
+                ring2icon(state);
+            }
+        };
 
         float_window_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     float_window_menu_animation(-1);
+                    //stopinitButtonSetting(timer,timerTask);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         });
-
-        float_window_menu.setVisibility(View.GONE);
 
         floatwindowbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,6 +415,7 @@ public class FloatWindowService extends Service {
                 if (clickflag == true) {//不是onTouch事件
                     try {
                         float_window_menu_animation(1);
+                        //timer = initButtonSetting(timer,timerTask);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -267,79 +460,6 @@ public class FloatWindowService extends Service {
             }
         });
 
-        home_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.putExtra("GOHOME", "GOHOME");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                startActivity(intent);
-                try {
-                    float_window_menu_animation(-1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        airplane_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ContentResolver cr = getContentResolver();
-                if(system_version < 4.2){
-                    if(Settings.System.getString(cr,Settings.System.AIRPLANE_MODE_ON).equals("0")){
-                        //获取当前飞行模式状态,返回的是String值0,或1.0为关闭飞行,1为开启飞行
-                        //如果关闭飞行,则打开飞行
-                        Settings.System.putString(cr,Settings.System.AIRPLANE_MODE_ON, "1");
-                        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-                        intent.putExtra("Sponsor", "Sodino");
-                        sendBroadcast(intent);
-                    }else{
-                        //否则关闭飞行
-                        Settings.System.putString(cr,Settings.System.AIRPLANE_MODE_ON, "0");
-                        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-                        sendBroadcast(intent);
-                    }
-                }
-                else{
-                    Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-                try {
-                    float_window_menu_animation(-1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        wifi_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (wifimanager.getWifiState()) {
-                    case 0:
-                        //WIFI_STATE_DISABLING
-                        break;
-                    case 1:
-                        //WIFI_SDATE_DISABLED
-                        wifimanager.setWifiEnabled(true);//关闭wifi
-                        break;
-                    case 2:
-                        //WIFI_STATE_ENABLING
-                        break;
-                    case 3:
-                        // WIFI_STATE_ENABLED
-                        wifimanager.setWifiEnabled(false);//开启wifi
-                        break;
-                    default:
-                        Toast.makeText(getApplicationContext(), "WIFI Mistake happened!", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-        });
-
         wifi_button.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -355,151 +475,19 @@ public class FloatWindowService extends Service {
             }
         });
 
-        connectivity_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*Intent intent = new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS);
-                ComponentName cm = new ComponentName("com.android.settings","com.android.settings.WirelessSettings");
-                intent.setComponent(cm);
-                intent.setAction("android.intent.action.VIEW");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);*/
-                Boolean enabled = false;
-                if(system_version < 5){
-                    if(getMobileDataState()){
-
-                    }
-                    else{
-                        enabled = true;
-                    }
-                    setMobileState(getApplicationContext(),enabled);
-                }
-                else{
-                    Intent intent = new Intent(Settings.ACTION_SETTINGS);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    try {
-                        float_window_menu_animation(-1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-
-        bluetooth_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(bluetoothadapter.isEnabled()){
-                    bluetoothadapter.disable();//关闭蓝牙
-                }
-                else{
-                    bluetoothadapter.enable();//打开蓝牙
-                }
-            }
-        });
-
-        ring_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int state = audiomanager.getRingerMode();
-                if(state == AudioManager.RINGER_MODE_SILENT){
-                    audiomanager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                    Log.i("audiomanager", "9");
-                }
-                else if(state == AudioManager.RINGER_MODE_NORMAL){
-                    audiomanager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-                    Log.i("audiomanager","10");
-                }
-                else if(state == AudioManager.RINGER_MODE_VIBRATE){
-                    /*Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);*/
-                    audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                    Log.i("audiomanager","11");
-                }
-            }
-        });
-
-        camera_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent();
-                // 指定开启系统相机的Action
-                intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                try {
-                    float_window_menu_animation(-1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                /*Uri uri = Uri.parse("http://www.baidu.com");
-                Intent it   = new Intent(Intent.ACTION_VIEW,uri);
-                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(it);
-                float_window_menu.setVisibility(View.GONE);
-                float_window_small.setVisibility(View.VISIBLE);*/
-                /*ContentResolver cr = getContentResolver();
-                if(system_version < 4.2){
-                    if(Settings.System.getString(cr,Settings.System.AIRPLANE_MODE_ON).equals("0")){
-                        //获取当前飞行模式状态,返回的是String值0,或1.0为关闭飞行,1为开启飞行
-                        //如果关闭飞行,则打开飞行
-                        Settings.System.putString(cr,Settings.System.AIRPLANE_MODE_ON, "1");
-                        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-                        intent.putExtra("Sponsor", "Sodino");
-                        sendBroadcast(intent);
-                    }else{
-                        //否则关闭飞行
-                        Settings.System.putString(cr,Settings.System.AIRPLANE_MODE_ON, "0");
-                        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-                        sendBroadcast(intent);
-                    }
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),"4.2以上系统不支持修改飞行模式",Toast.LENGTH_SHORT).show();
-                }*/
-            }
-        });
-
-        message_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.setType("vnd.android-dir/mms-sms");
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                try {
-                    float_window_menu_animation(-1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        call_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                try {
-                    float_window_menu_animation(-1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                /*Intent intent =new Intent();
-                intent.setAction("android.intent.action.DIAL");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                //Content的startActivity方法，需要开启一个新的task。如果使用 Activity的startActivity方法，不会有任何限制，因为Activity继承自Context，重载了startActivity方法。
-                startActivity(intent);*/
-
-            }
-        });
-
         return super.onStartCommand(intent,flags,startId);
+    }
+
+    public Timer initButtonSetting(Timer timer,TimerTask timerTask){
+        timer = new Timer(true);
+        timer.schedule(timerTask,0,500);
+        return timer;
+    }
+
+    public void stopinitButtonSetting(Timer timer,TimerTask timerTask){
+        timer.cancel();
+        timer.purge();
+        timerTask.cancel();
     }
 
     public void setMobileState(Context context,Boolean enabled){
@@ -575,7 +563,8 @@ public class FloatWindowService extends Service {
         TimerTask timertask = new TimerTask() {
             @Override
             public void run() {
-                ring2icon();
+                int state = audiomanager.getRingerMode();
+                ring2icon(state);
             }
         };
         timer.schedule(timertask,0,300);
@@ -586,7 +575,8 @@ public class FloatWindowService extends Service {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                write2icon();
+                ContentResolver cr = getContentResolver();
+                write2icon(cr);
             }
         };
         timer.schedule(timerTask,0,300);
@@ -679,9 +669,8 @@ public class FloatWindowService extends Service {
         }
     }
 
-    public void ring2icon(){
+    public void ring2icon(int state){
         Message msg = new Message();
-        int state = audiomanager.getRingerMode();
         if(state == AudioManager.RINGER_MODE_SILENT){
             msg.what = 9;//静音
             //Log.i("audiomanager","9");
@@ -700,9 +689,9 @@ public class FloatWindowService extends Service {
         handler.sendMessage(msg);
     }
 
-    public void write2icon(){
+    public void write2icon(ContentResolver cr){
         Message msg = new Message();
-        ContentResolver cr = getContentResolver();
+
         if(Settings.System.getString(cr,Settings.System.AIRPLANE_MODE_ON).equals("0")){
             //获取当前飞行模式状态,返回的是String值0,或1.0为关闭飞行,1为开启飞行
             msg.what = 12;
@@ -713,7 +702,7 @@ public class FloatWindowService extends Service {
     }
 
     public void flash2icon(){
-        Message msg = new Message();
+        //Message msg = new Message();
         camera = Camera.open();
         Camera.Parameters parameters = camera.getParameters();
         if(parameters == null){
@@ -887,4 +876,5 @@ public class FloatWindowService extends Service {
             mWindowManager.removeView(float_window_menu);
         }
     }
+
 }
