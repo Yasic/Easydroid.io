@@ -25,25 +25,26 @@
         android:layout_height="93dp"
         android:orientation="horizontal">
         <Button
-            android:id="@+id/message_button"
+            android:id="@+id/call_button"
             android:layout_width="@dimen/buttonwidth"
             android:layout_height="@dimen/buttonwidth"
             android:layout_marginLeft="@dimen/buttonfullmargin"
             android:layout_marginRight="@dimen/buttonhalfmargin"
             android:layout_marginTop="@dimen/buttonfullmargin"
             android:layout_marginBottom="@dimen/buttonhalfmargin"
-            android:background="@drawable/ic_message_draw_white_48dp"
+            android:background="@drawable/ic_phone_white_48dp"
             android:gravity="center"
             android:textAllCaps="false"/>
         <Button
-            android:id="@+id/call_button"
+            android:id="@+id/message_button"
             android:layout_width="@dimen/buttonwidth"
             android:layout_height="@dimen/buttonwidth"
             android:layout_marginLeft="@dimen/buttonhalfmargin"
             android:layout_marginRight="@dimen/buttonhalfmargin"
             android:layout_marginTop="@dimen/buttonfullmargin"
             android:layout_marginBottom="@dimen/buttonhalfmargin"
-            android:background="@drawable/ic_phone_white_48dp"/>
+            android:background="@drawable/ic_comment_multiple_outline_white_48dp"
+            />
         <Button
             android:id="@+id/camera_button"
             android:layout_width="@dimen/buttonwidth"
@@ -99,14 +100,14 @@
             android:orientation="horizontal"
             android:layout_below="@id/floatwindowmenu_second">
             <Button
-                android:id="@+id/airplane_button"
+                android:id="@+id/search_button"
                 android:layout_width="@dimen/buttonwidth"
                 android:layout_height="@dimen/buttonwidth"
                 android:layout_marginLeft="@dimen/buttonfullmargin"
                 android:layout_marginRight="@dimen/buttonhalfmargin"
                 android:layout_marginTop="@dimen/buttonhalfmargin"
                 android:layout_marginBottom="@dimen/buttonfullmargin"
-                android:background="@drawable/ic_airplane_white_48dp"
+                android:background="@drawable/ic_magnify_white_48dp"
                 />
             <Button
                 android:id="@+id/ring_button"

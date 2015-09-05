@@ -4,10 +4,8 @@ import android.animation.ObjectAnimator;
 import android.app.ActivityManager;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -15,14 +13,13 @@ import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v7.internal.view.menu.MenuWrapperFactory;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,8 +28,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Field;
@@ -61,7 +62,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
     WifiManager wifimanager;
     BluetoothAdapter bluetoothadapter;
     AudioManager audiomanager;
-    Button floatwindowbutton , home_button , wifi_button , connectivity_button , airplane_button , camera_button;
+    Button floatwindowbutton , home_button , wifi_button , connectivity_button , search_button , camera_button;
     Button bluetooth_button,ring_button,message_button,call_button;
     private boolean clickflag;
     public int system_version;
@@ -70,6 +71,11 @@ public class FloatWindowService extends Service implements View.OnClickListener 
     private Message msg = new Message();
     TimerTask timerTask;
     Timer timer;
+
+    private WindowManager searchmenu_mWindowManager;
+
+    private int urlflag;
+    private  LinearLayout search_FloatLayout;
 
     Handler handler = new Handler(){
       @Override
@@ -128,12 +134,12 @@ public class FloatWindowService extends Service implements View.OnClickListener 
               case 11:
                   ring_button.setBackground(getApplication().getResources().getDrawable(R.drawable.ic_vibrate_white_48dp));
                   break;
-              case 12:
+              /*case 12:
                   airplane_button.setBackground(getApplication().getResources().getDrawable(R.drawable.ic_airplane_grey600_48dp));
                   break;
               case 13:
                   airplane_button.setBackground(getApplication().getResources().getDrawable(R.drawable.ic_airplane_white_48dp));
-                  break;
+                  break;*/
               case 14:
                   float_window_menu.setVisibility(View.VISIBLE);
                   float_window_small.setVisibility(View.GONE);
@@ -141,6 +147,10 @@ public class FloatWindowService extends Service implements View.OnClickListener 
               case 15:
                   float_window_small.setVisibility(View.VISIBLE);
                   float_window_menu.setVisibility(View.GONE);
+                  break;
+              case -10:
+                  searchmenu_mWindowManager.removeView(search_FloatLayout);
+                  break;
               default:
                   //Toast.makeText(getApplication(),"Mistake happened!",Toast.LENGTH_SHORT).show();
                   break;
@@ -176,7 +186,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
 
     public void setbutton2view(){
         LayoutInflater inflater = LayoutInflater.from(getApplication());
-        float_window_menu = (RelativeLayout)inflater.inflate(R.layout.float_window_menu , null);
+        float_window_menu = (RelativeLayout)inflater.inflate(R.layout.float_window_menu, null);
         float_window_small = (LinearLayout) inflater.inflate(R.layout.float_window, null);
 
         floatwindowbutton = (Button)float_window_small.findViewById(R.id.floatwindowbutton);
@@ -187,8 +197,8 @@ public class FloatWindowService extends Service implements View.OnClickListener 
         wifi_button.setOnClickListener(this);
         connectivity_button = (Button)float_window_menu.findViewById(R.id.connectivity_button);
         connectivity_button.setOnClickListener(this);
-        airplane_button = (Button)float_window_menu.findViewById(R.id.airplane_button);
-        airplane_button.setOnClickListener(this);
+        search_button = (Button)float_window_menu.findViewById(R.id.search_button);
+        search_button.setOnClickListener(this);
         bluetooth_button = (Button)float_window_menu.findViewById(R.id.bluetooth_button);
         bluetooth_button.setOnClickListener(this);
         ring_button = (Button)float_window_menu.findViewById(R.id.ring_button);
@@ -264,8 +274,14 @@ public class FloatWindowService extends Service implements View.OnClickListener 
                 }
                 break;
 
-            case R.id.airplane_button:
-                ContentResolver cr = getContentResolver();
+            case R.id.search_button:
+                start_serchingmenu();
+                try {
+                    float_window_menu_animation(-1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                /*ContentResolver cr = getContentResolver();
                 if(system_version < 4.2){
                     if(Settings.System.getString(cr,Settings.System.AIRPLANE_MODE_ON).equals("0")){
                         //获取当前飞行模式状态,返回的是String值0,或1.0为关闭飞行,1为开启飞行
@@ -290,7 +306,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
                     float_window_menu_animation(-1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
                 break;
 
             case R.id.bluetooth_button:
@@ -373,7 +389,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
         refresh_connectivity();//周期更新connecticon状态
         refresh_bluetooth();//刷新蓝牙icon状态
         refresh_ring();
-        refresh_write();
+        //refresh_write();
 
         create_float_window();
         create_float_windowmenu();
@@ -480,7 +496,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
 
     public Timer initButtonSetting(Timer timer,TimerTask timerTask){
         timer = new Timer(true);
-        timer.schedule(timerTask,0,500);
+        timer.schedule(timerTask, 0, 500);
         return timer;
     }
 
@@ -844,6 +860,144 @@ public class FloatWindowService extends Service implements View.OnClickListener 
         menuParams.width = dp2pix(196);
         menuParams.height = dp2pix(196);*/
         mWindowManager.addView(float_window_menu, menuParams);
+    }
+
+    public void start_serchingmenu(){
+        WindowManager.LayoutParams wmParams1 = new WindowManager.LayoutParams();
+        searchmenu_mWindowManager = (WindowManager)getApplication().getSystemService(getApplication().WINDOW_SERVICE);
+        //访问service提供的服务
+        wmParams1.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;//
+        //设置图片格式，效果为背景透明
+        wmParams1.format = PixelFormat.TRANSLUCENT;
+        //设置浮动窗口不可聚焦（实现操作除浮动窗口外的其他可见窗口的操作）
+        /*wmParams1.flags = WindowManager.LayoutParams.;*/
+        //调整悬浮窗显示的停靠位置为左侧置顶
+        wmParams1.gravity = Gravity.LEFT | Gravity.TOP;
+        // 以屏幕左上角为原点，设置x、y初始值，相对于gravity
+        wmParams1.x = 0;
+        wmParams1.y = 0;
+        wmParams1.width = WindowManager.LayoutParams.MATCH_PARENT;
+        //wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        //wmParams.width = dp2pix(48);
+        wmParams1.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+        LayoutInflater inflater = LayoutInflater.from(getApplication());
+        search_FloatLayout = (LinearLayout) inflater.inflate(R.layout.float_searchmenu, null);
+        searchmenu_mWindowManager.addView(search_FloatLayout, wmParams1);
+        float_window_menu2searchingmenu();
+        Button searchmenu_okbutton = (Button)search_FloatLayout.findViewById(R.id.searchmenu_okbutton);
+        RadioGroup radioGroup = (RadioGroup)search_FloatLayout.findViewById(R.id.searchmenu_group);
+        RadioButton baidubutton = (RadioButton)search_FloatLayout.findViewById(R.id.searchmenu_baidubutton);
+        RadioButton googlebbutton = (RadioButton)search_FloatLayout.findViewById(R.id.searchmenu_googlebutton);
+        RadioButton bingbutton = (RadioButton)search_FloatLayout.findViewById(R.id.searchmenu_bingbutton);
+
+        search_FloatLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                movesearchingmenu();
+            }
+        });
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // TODO Auto-generated method stub
+                switch (checkedId){
+                    case R.id.searchmenu_baidubutton:
+                        urlflag = 1;
+                        break;
+                    case R.id.searchmenu_googlebutton:
+                        urlflag = 2;
+                        break;
+                    case R.id.searchmenu_bingbutton:
+                        urlflag = 3;
+                        break;
+                    default:
+                        urlflag = 1;
+                        break;
+                }
+            }
+        });
+        searchmenu_okbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = null;
+                EditText urlbody = (EditText)search_FloatLayout.findViewById(R.id.searchmenu_searchingbody);
+                String urltag = urlbody.getText().toString();
+                //Uri uri = Uri.parse("http://www.google.com/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q="+"test");
+                switch (urlflag){
+                    case 1:
+                        if(urltag.equals("")|urltag == null){
+                            uri = Uri.parse("http://www.baidu.com");
+                        }
+                        else{
+                            uri = Uri.parse("http://www.baidu.com"+"/s?wd="+urltag);
+                        }
+                        break;
+                    case 2:
+                        if(urltag.equals("")|urltag == null){
+                            uri = Uri.parse("http://www.google.com");
+                        }
+                        else{
+                            uri = Uri.parse("http://www.google.com/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q="+urltag);
+                        }
+                        break;
+                    case 3:
+                        if(urltag.equals("")|urltag == null){
+                            uri = Uri.parse("http://www.bing.com");
+                        }
+                        else{
+                            uri = Uri.parse("http://www.bing.com/search?q="+urltag);
+                        }
+                        break;
+                    default:
+                        uri = Uri.parse("http://www.baidu.com"+"/s?wd="+urltag);
+                        break;
+                }
+                Intent itent = new Intent(Intent.ACTION_VIEW,uri);
+                itent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(itent);
+                movesearchingmenu();
+            }
+        });
+    }
+
+    private void float_window_menu2searchingmenu(){
+        ObjectAnimator objectAnimator1;
+        objectAnimator1 = ObjectAnimator.ofFloat(float_window_menu,"scaleX",1.0f,0.0f);
+        objectAnimator1.setInterpolator(new AccelerateDecelerateInterpolator());
+        objectAnimator1.setDuration(300);
+        objectAnimator1.start();
+        ObjectAnimator objectAnimator2;
+        objectAnimator2 = ObjectAnimator.ofFloat(float_window_menu, "scaleY", 1.0f, 0.0f);
+        objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
+        objectAnimator2.setDuration(300);
+        objectAnimator2.start();
+        int screenWidth = mWindowManager.getDefaultDisplay().getWidth();
+        ObjectAnimator objectAnimator3;
+        objectAnimator3 = ObjectAnimator.ofFloat(search_FloatLayout, "X", -screenWidth, 0.0f);
+        objectAnimator3.setInterpolator(new AccelerateDecelerateInterpolator());
+        objectAnimator3.setDuration(300);
+        objectAnimator3.start();
+    }
+
+    private void movesearchingmenu(){
+        int screenWidth = mWindowManager.getDefaultDisplay().getWidth();
+        ObjectAnimator objectAnimator3;
+        objectAnimator3 = ObjectAnimator.ofFloat(search_FloatLayout, "X", 0.0f, screenWidth);
+        objectAnimator3.setInterpolator(new AccelerateDecelerateInterpolator());
+        objectAnimator3.setDuration(300);
+        objectAnimator3.start();
+        Timer timer = new Timer(true);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Message msg = new Message();
+                msg.what = -10;
+                handler.sendMessage(msg);
+            }
+        };
+        timer.schedule(timerTask,300);
     }
 
     private void smallfloatbutton_animation(){
