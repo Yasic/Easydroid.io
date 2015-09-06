@@ -1,6 +1,9 @@
 package com.easydroid.esir.easydroid;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.ActivityManager;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -281,32 +284,6 @@ public class FloatWindowService extends Service implements View.OnClickListener 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                /*ContentResolver cr = getContentResolver();
-                if(system_version < 4.2){
-                    if(Settings.System.getString(cr,Settings.System.AIRPLANE_MODE_ON).equals("0")){
-                        //获取当前飞行模式状态,返回的是String值0,或1.0为关闭飞行,1为开启飞行
-                        //如果关闭飞行,则打开飞行
-                        Settings.System.putString(cr,Settings.System.AIRPLANE_MODE_ON, "1");
-                        intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-                        intent.putExtra("Sponsor", "Sodino");
-                        sendBroadcast(intent);
-                    }else{
-                        //否则关闭飞行
-                        Settings.System.putString(cr,Settings.System.AIRPLANE_MODE_ON, "0");
-                        intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-                        sendBroadcast(intent);
-                    }
-                }
-                else{
-                    intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-                try {
-                    float_window_menu_animation(-1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
                 break;
 
             case R.id.bluetooth_button:
@@ -326,9 +303,6 @@ public class FloatWindowService extends Service implements View.OnClickListener 
                     audiomanager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                 }
                 else if(audiomanager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE){
-                    /*Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);*/
                     audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
                 break;
@@ -558,7 +532,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
                 connecty2icon();
             }
         };
-        timer.schedule(timertask,0,300);
+        timer.schedule(timertask, 0, 300);
     }
 
     public void refresh_bluetooth(){
@@ -717,40 +691,6 @@ public class FloatWindowService extends Service implements View.OnClickListener 
         handler.sendMessage(msg);
     }
 
-    public void flash2icon(){
-        //Message msg = new Message();
-        camera = Camera.open();
-        Camera.Parameters parameters = camera.getParameters();
-        if(parameters == null){
-            Log.i("error","parameters");
-        }
-        List<String> flashModes = parameters.getSupportedFlashModes();
-        if(flashModes == null){
-            Log.i("error","flashmodes");
-        }
-        String flashmode = parameters.getFlashMode();
-        if (!Camera.Parameters.FLASH_MODE_TORCH.equals(flashmode)) {
-            if (flashModes.contains(Camera.Parameters.FLASH_MODE_ON)) {
-                msg.what = 14;
-                Log.i("flashmode","14");
-            }
-            else if(flashModes.contains(Camera.Parameters.FLASH_MODE_OFF)){
-                Log.i("flashmode","15");
-                msg.what = 15;
-            }
-            else{
-                msg.what = 15;
-                Log.i("flashmode","15+");
-            }
-        }
-        if (camera!=null){
-            camera.stopPreview();
-            camera.release();
-            camera=null;
-        }
-        handler.sendMessage(msg);
-    }
-
     private int dp2pix(int dp){
        float scale = getResources().getDisplayMetrics().density;
         int pix = (int) (dp * scale + 0.5f);
@@ -761,12 +701,6 @@ public class FloatWindowService extends Service implements View.OnClickListener 
         float scale = getResources().getDisplayMetrics().density;
         int dp = (int) (pix/scale + 0.5f);
         return dp;
-    }
-
-    private boolean ishome(){
-        ActivityManager mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> rti = mActivityManager.getRunningTasks(1);
-        return getHomes().contains(rti.get(0).topActivity.getPackageName());
     }
 
     private List<String> getHomes() {
@@ -780,46 +714,6 @@ public class FloatWindowService extends Service implements View.OnClickListener 
             names.add(ri.activityInfo.packageName);
         }
         return names;
-    }
-
-    public void float_window_menu_animation(int i) throws InterruptedException {
-        if(i == 1){//出现
-            Message msg = new Message();
-            msg.what = 14;
-            handler.sendMessage(msg);
-            ObjectAnimator objectAnimator1;
-            objectAnimator1 = ObjectAnimator.ofFloat(float_window_menu,"scaleX",0.0f,1.0f);
-            objectAnimator1.setInterpolator(new AccelerateDecelerateInterpolator());
-            objectAnimator1.setDuration(300);
-            objectAnimator1.start();
-            ObjectAnimator objectAnimator2;
-            objectAnimator2 = ObjectAnimator.ofFloat(float_window_menu, "scaleY", 0.0f, 1.0f);
-            objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
-            objectAnimator2.setDuration(300);
-            objectAnimator2.start();
-        }
-        else{
-            ObjectAnimator objectAnimator1;
-            objectAnimator1 = ObjectAnimator.ofFloat(float_window_menu,"scaleX",1.0f,0.0f);
-            objectAnimator1.setInterpolator(new AccelerateDecelerateInterpolator());
-            objectAnimator1.setDuration(300);
-            objectAnimator1.start();
-            ObjectAnimator objectAnimator2;
-            objectAnimator2 = ObjectAnimator.ofFloat(float_window_menu, "scaleY", 1.0f, 0.0f);
-            objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
-            objectAnimator2.setDuration(300);
-            objectAnimator2.start();
-            Timer timer = new Timer(true);
-            TimerTask timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    Message msg = new Message();
-                    msg.what = 15;
-                    handler.sendMessage(msg);
-                }
-            };
-            timer.schedule(timerTask, 300);
-        }
     }
 
     public void create_float_window(){
@@ -964,18 +858,20 @@ public class FloatWindowService extends Service implements View.OnClickListener 
 
     private void float_window_menu2searchingmenu(){
         ObjectAnimator objectAnimator1;
-        objectAnimator1 = ObjectAnimator.ofFloat(float_window_menu,"scaleX",1.0f,0.0f);
+        LinearLayout testlayout = (LinearLayout)float_window_menu.findViewById(R.id.float_window_menu_smallmenu);
+        objectAnimator1 = ObjectAnimator.ofFloat(testlayout,"scaleX",1.0f,0.0f);
         objectAnimator1.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator1.setDuration(300);
         objectAnimator1.start();
         ObjectAnimator objectAnimator2;
-        objectAnimator2 = ObjectAnimator.ofFloat(float_window_menu, "scaleY", 1.0f, 0.0f);
+        objectAnimator2 = ObjectAnimator.ofFloat(testlayout, "scaleY", 1.0f, 0.0f);
         objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator2.setDuration(300);
         objectAnimator2.start();
         int screenWidth = mWindowManager.getDefaultDisplay().getWidth();
         ObjectAnimator objectAnimator3;
-        objectAnimator3 = ObjectAnimator.ofFloat(search_FloatLayout, "X", -screenWidth, 0.0f);
+        RelativeLayout templayout = (RelativeLayout)search_FloatLayout.findViewById(R.id.float_searchmenu_child);
+        objectAnimator3 = ObjectAnimator.ofFloat(templayout, "X", -screenWidth, dp2pix(16));
         objectAnimator3.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator3.setDuration(300);
         objectAnimator3.start();
@@ -984,7 +880,8 @@ public class FloatWindowService extends Service implements View.OnClickListener 
     private void movesearchingmenu(){
         int screenWidth = mWindowManager.getDefaultDisplay().getWidth();
         ObjectAnimator objectAnimator3;
-        objectAnimator3 = ObjectAnimator.ofFloat(search_FloatLayout, "X", 0.0f, screenWidth);
+        RelativeLayout templayout = (RelativeLayout)search_FloatLayout.findViewById(R.id.float_searchmenu_child);
+        objectAnimator3 = ObjectAnimator.ofFloat(templayout, "X", dp2pix(16), screenWidth);
         objectAnimator3.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator3.setDuration(300);
         objectAnimator3.start();
@@ -997,7 +894,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
                 handler.sendMessage(msg);
             }
         };
-        timer.schedule(timerTask,300);
+        timer.schedule(timerTask, 300);
     }
 
     private void smallfloatbutton_animation(){
@@ -1016,6 +913,48 @@ public class FloatWindowService extends Service implements View.OnClickListener 
         objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator2.setDuration(1500);
         objectAnimator2.start();
+    }
+
+    public void float_window_menu_animation(int i) throws InterruptedException {
+        if(i == 1){//出现
+            Message msg = new Message();
+            msg.what = 14;
+            handler.sendMessage(msg);
+            ObjectAnimator objectAnimator1;
+            LinearLayout testlaout = (LinearLayout)float_window_menu.findViewById(R.id.float_window_menu_smallmenu);
+            objectAnimator1 = ObjectAnimator.ofFloat(testlaout,"scaleX",0.0f,1.0f);
+            objectAnimator1.setInterpolator(new AccelerateDecelerateInterpolator());
+            objectAnimator1.setDuration(300);
+            objectAnimator1.start();
+            ObjectAnimator objectAnimator2;
+            objectAnimator2 = ObjectAnimator.ofFloat(testlaout, "scaleY", 0.0f, 1.0f);
+            objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
+            objectAnimator2.setDuration(300);
+            objectAnimator2.start();
+        }
+        else{
+            ObjectAnimator objectAnimator1;
+            LinearLayout testlaout = (LinearLayout)float_window_menu.findViewById(R.id.float_window_menu_smallmenu);
+            objectAnimator1 = ObjectAnimator.ofFloat(testlaout,"scaleX",1.0f,0.0f);
+            objectAnimator1.setInterpolator(new AccelerateDecelerateInterpolator());
+            objectAnimator1.setDuration(300);
+            objectAnimator1.start();
+            ObjectAnimator objectAnimator2;
+            objectAnimator2 = ObjectAnimator.ofFloat(testlaout, "scaleY", 1.0f, 0.0f);
+            objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
+            objectAnimator2.setDuration(300);
+            objectAnimator2.start();
+            Timer timer = new Timer(true);
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    Message msg = new Message();
+                    msg.what = 15;
+                    handler.sendMessage(msg);
+                }
+            };
+            timer.schedule(timerTask, 300);
+        }
     }
 
     @Override

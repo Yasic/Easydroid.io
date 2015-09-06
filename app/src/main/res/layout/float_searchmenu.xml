@@ -6,6 +6,7 @@
     android:orientation="horizontal"
     >
 <RelativeLayout
+    android:id="@+id/float_searchmenu_child"
     android:layout_gravity="center_vertical"
     android:orientation="horizontal"
     android:layout_marginBottom="50dp"
