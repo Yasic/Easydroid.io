@@ -9,7 +9,7 @@
     android:id="@+id/float_searchmenu_child"
     android:layout_gravity="center_vertical"
     android:orientation="horizontal"
-    android:layout_marginBottom="50dp"
+    android:layout_marginBottom="72dp"
     android:layout_width="match_parent"
     android:layout_height="165dp"
     android:layout_marginLeft="16dp"
@@ -26,9 +26,12 @@
             android:id="@+id/searchmenu_searchingbody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="searching..."
+            android:textColorHint="#cbcbcb"
             android:textSize="24dp"
             android:layout_marginTop="7dp"
-            android:textColor="#f7f8f3" />
+            android:textColor="#f7f8f3"
+            />
         <RadioGroup
             android:id="@+id/searchmenu_group"
             android:layout_width="match_parent"

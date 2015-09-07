@@ -7,10 +7,9 @@
     >
     <Button
         android:id="@+id/floatwindowbutton"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:background="@drawable/easytouch"
-        android:textSize="21dp"
         />
 </LinearLayout>  
