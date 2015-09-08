@@ -75,6 +75,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
     private Message msg = new Message();
     TimerTask timerTask;
     Timer timer;
+    private float touchX,touchY;
 
     private WindowManager searchmenu_mWindowManager;
 
@@ -451,6 +452,8 @@ public class FloatWindowService extends Service implements View.OnClickListener 
                         }
                         if (clickflag == false) {
                             //getRawX是触摸位置相对于屏幕的坐标，getX是相对于按钮的坐标
+                            touchX = event.getRawX();
+                            touchY = event.getRawY();
                             wmParams.x = (int) event.getRawX() - floatwindowbutton.getMeasuredWidth() / 2;
                             //减25为状态栏的高度
                             wmParams.y = (int) event.getRawY() - floatwindowbutton.getMeasuredHeight() / 2 - 25;
@@ -886,8 +889,6 @@ public class FloatWindowService extends Service implements View.OnClickListener 
         ObjectAnimator objectAnimator3;
 
         EditText edtsearch_title = (EditText)search_FloatLayout.findViewById(R.id.searchmenu_searchingbody);
-        //todo
-        //edittext编辑框还需要修改
         edtsearch_title.setFocusable(true);
         edtsearch_title.setFocusableInTouchMode(true);
         edtsearch_title.requestFocus();
@@ -941,7 +942,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
         objectAnimator2.start();
         Message msg = new Message();
         msg.what = 111;
-        handler.sendMessageDelayed(msg,4500);
+        handler.sendMessageDelayed(msg, 4500);
     }
 
     public void float_window_menu_animation(int i) throws InterruptedException {
@@ -962,14 +963,22 @@ public class FloatWindowService extends Service implements View.OnClickListener 
             objectAnimator2.start();
             int screenWidth = mWindowManager.getDefaultDisplay().getWidth();
             int screenHeight = mWindowManager.getDefaultDisplay().getHeight();
-            /*ObjectAnimator objectAnimator3;
-            objectAnimator3 = ObjectAnimator.ofFloat(testlaout,"X",wmParams.x,(screenWidth-dp2pix(279))/2);
+            ObjectAnimator objectAnimator3;
+            int[] location = new int[2];
+            float_window_small.getLocationOnScreen(location);
+            int x = location[0];
+            int y = location[1];
+            objectAnimator3 = ObjectAnimator.ofFloat(testlaout,"X",wmParams.x-dp2pix(279)/2,(screenWidth-dp2pix(279))/2);
+            Log.i("wmParamsX", String.valueOf(wmParams.x));
             objectAnimator3.setInterpolator(new AccelerateDecelerateInterpolator());
             objectAnimator3.start();
+            objectAnimator3.setDuration(300);
             ObjectAnimator objectAnimator4;
-            objectAnimator4 = ObjectAnimator.ofFloat(testlaout,"Y",wmParams.y,(screenHeight-dp2pix(279))/2);
+            objectAnimator4 = ObjectAnimator.ofFloat(testlaout,"Y",wmParams.y-dp2pix(279)/2,(screenHeight-dp2pix(279))/2);
+            Log.i("wmParamsY", String.valueOf(wmParams.y));
             objectAnimator4.setInterpolator(new AccelerateDecelerateInterpolator());
-            objectAnimator4.start();*/
+            objectAnimator4.setDuration(300);
+            objectAnimator4.start();
         }
         else{
             ObjectAnimator objectAnimator1;
@@ -986,11 +995,11 @@ public class FloatWindowService extends Service implements View.OnClickListener 
             ObjectAnimator objectAnimator3;
             int screenWidth = mWindowManager.getDefaultDisplay().getWidth();
             int screenHeight = mWindowManager.getDefaultDisplay().getHeight();
-            /*objectAnimator3 = ObjectAnimator.ofFloat(testlaout,"X",(screenWidth-dp2pix(279))/2,wmParams.x);
+            /*objectAnimator3 = ObjectAnimator.ofFloat(testlaout,"X",(screenWidth-dp2pix(279))/2,touchX);
             objectAnimator3.setInterpolator(new AccelerateDecelerateInterpolator());
             objectAnimator3.start();
             ObjectAnimator objectAnimator4;
-            objectAnimator4 = ObjectAnimator.ofFloat(testlaout,"Y",(screenHeight-dp2pix(279))/2,wmParams.y);
+            objectAnimator4 = ObjectAnimator.ofFloat(testlaout,"Y",(screenHeight-dp2pix(279))/2,touchY);
             objectAnimator4.setInterpolator(new AccelerateDecelerateInterpolator());
             objectAnimator4.start();*/
             Timer timer = new Timer(true);
@@ -1005,7 +1014,7 @@ public class FloatWindowService extends Service implements View.OnClickListener 
             timer.schedule(timerTask, 300);
             Message msg = new Message();
             msg.what = 111;
-            handler.sendMessageDelayed(msg,500);
+            handler.sendMessageDelayed(msg, 500);
         }
     }
 
