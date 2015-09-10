@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="#3399FF">
+    <Button
+        android:id="@+id/noteviewtype_backbutton"
+        android:layout_height="30dp"
+        android:layout_width="30dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:gravity="center"
+        android:background="@drawable/ic_arrow_left_white_48dp"
+        android:textAllCaps="false"
+        android:textSize="24dp"
+        >
+    </Button>
+    <Button
+        android:layout_height="30dp"
+        android:layout_width="30dp"
+        android:id="@+id/noteviewtype_editbutton"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/ic_border_color_white_48dp">
+    </Button>
+</RelativeLayout>
