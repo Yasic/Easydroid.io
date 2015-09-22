@@ -1,28 +1,10 @@
 <resources>
-    <string name="app_name">Noop</string>
+    <string name="app_name">Homebutton</string>
+
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="selecttext">#FF6600</string>
 
-    <color name="color_0">#ffffff</color>
-    <color name="color_1">#88e51c23</color>
-    <color name="color_2">#88e91e63</color>
-    <color name="color_3">#88880e4f</color>
-    <color name="color_4">#889c27b0</color>
-    <color name="color_5">#88673ab7</color>
-    <color name="color_6">#883f51b5</color>
-    <color name="color_7">#885677fc</color>
-    <color name="color_8">#8803a9f4</color>
-    <color name="color_9">#8800bcd4</color>
-    <color name="color_10">#88009688</color>
-    <color name="color_11">#88259b24</color>
-    <color name="color_12">#888bc34a</color>
-    <color name="color_13">#88cddc39</color>
-    <color name="color_14">#88ffeb3b</color>
-    <color name="color_15">#88ffc107</color>
-    <color name="color_16">#88ff9800</color>
-    <color name="color_17">#88ff5722</color>
-    <color name="color_18">#88795548</color>
-    
-    <color name="cornor_stroke">#a9a9a9</color>
+    <dimen name="buttonwidth">45dp</dimen>
+    <dimen name="buttonfullmargin">36dp</dimen>
+    <dimen name="buttonhalfmargin">18dp</dimen>
 </resources>
